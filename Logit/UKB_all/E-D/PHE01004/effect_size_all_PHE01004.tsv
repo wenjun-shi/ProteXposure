@@ -1,0 +1,20 @@
+FieldID	Trait	Category	OR	95%CI	Z	P	FactorID
+PHD01003	Lung cancer	Neoplasms	1.2744	1.14274, 1.41606	4.42874366321239	9.47835944753964e-6	PHE01004
+PHD01013	Leukaemia	Neoplasms	1.2339	1.00313, 1.49673	2.05006158012031	0.0403584219539492	PHE01004
+PHD02001	Septicaemia	Certain infectious and parasitic diseases	1.1405	1.06361, 1.22155	3.7206721542359	1.9869324164194e-4	PHE01004
+PHD03001	Hypothyroidism	Endocrine, nutritional and metabolic diseases	1.1098	1.03697, 1.18634	3.03345500737701	0.00241770760456157	PHE01004
+PHD03002	Type II diabetes	Endocrine, nutritional and metabolic diseases	1.0898	1.03788, 1.14388	3.46615233316154	5.2796405582449e-4	PHE01004
+PHD04002	Major depression disorder	Mental and behavioural disorders	1.0949	1.03788, 1.15445	3.34013206787035	8.3738557745258e-4	PHE01004
+PHD04004	Anxiety disorder	Mental and behavioural disorders	1.1173	1.06113, 1.17574	4.2382064316075	2.25312553949413e-5	PHE01004
+PHD04005	Schizophrenia	Mental and behavioural disorders	1.5191	1.14651, 1.92645	3.1615569190107	0.00156928145602578	PHE01004
+PHD06001	Cataract	Diseases of the eye and adnexa	1.0422	1.00493, 1.08077	2.22931093735083	0.0257932234197672	PHE01004
+PHD07001	Hearing loss	Diseases of the ear and mastoid process	1.1115	1.04016, 1.18659	3.14471018965733	0.00166251434988087	PHE01004
+PHD08001	Essential (primary) hypertension	Diseases of the circulatory system	1.0686	1.03181, 1.10658	3.71767356330896	2.0106584506858e-4	PHE01004
+PHD08002	Angina pectoris	Diseases of the circulatory system	1.0719	1.00990, 1.13685	2.29679135153882	0.0216306751643837	PHE01004
+PHD08003	Coronary artery disease	Diseases of the circulatory system	1.0955	1.03027, 1.16397	2.92892343125148	0.00340138199413616	PHE01004
+PHD09001	Chronic obstructive pulmonary disease	Diseases of the respiratory system	1.2513	1.18754, 1.31781	8.44311488395124	3.0899114636633e-17	PHE01004
+PHD10007	Irritable bowel syndrome	Diseases of the digestive system	1.1061	1.01399, 1.20423	2.29780275943688	0.0215730176520972	PHE01004
+PHD11001	Rheumatoid arthritis	Diseases of the musculoskeletal system and connective tissue	1.0953	1.00061, 1.19682	1.99290472555358	0.0462718807803211	PHE01004
+PHD11004	Osteoporosis	Diseases of the musculoskeletal system and connective tissue	1.0794	1.01542, 1.14655	2.46501045891539	0.0137009252228352	PHE01004
+PHD12001	Acute renal failure	Diseases of the genitourinary system	1.1385	1.08254, 1.19693	5.06284964767146	4.13035592450514e-7	PHE01004
+PHD12002	Chronic kidney disease	Diseases of the genitourinary system	1.0717	1.01368, 1.13238	2.44978924836858	0.0142939851391519	PHE01004

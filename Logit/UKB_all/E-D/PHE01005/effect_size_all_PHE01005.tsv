@@ -1,0 +1,13 @@
+FieldID	Trait	Category	OR	95%CI	Z	P	FactorID
+PHD01003	Lung cancer	Neoplasms	1.9373	1.23054,  2.96353	2.94999736956348	0.00317776634961573	PHE01005
+PHD02001	Septicaemia	Certain infectious and parasitic diseases	1.4113	1.05522,  1.86750	2.36617013728959	0.0179731826754758	PHE01005
+PHD03001	Hypothyroidism	Endocrine, nutritional and metabolic diseases	1.3583	1.01967,  1.79022	2.13294443265729	0.0329292848161886	PHE01005
+PHD03002	Type II diabetes	Endocrine, nutritional and metabolic diseases	1.2861	1.04516,  1.57609	2.40148096255128	0.01632885869273	PHE01005
+PHD04002	Major depression disorder	Mental and behavioural disorders	1.3202	1.05153,  1.64669	2.42776410452038	0.0151922210953588	PHE01005
+PHD04004	Anxiety disorder	Mental and behavioural disorders	1.4735	1.19163,  1.81191	3.62696138796008	2.8677615804823e-4	PHE01005
+PHD04005	Schizophrenia	Mental and behavioural disorders	5.4817	2.12219, 12.00712	3.90822041054137	9.29784641286844e-5	PHE01005
+PHD08001	Essential (primary) hypertension	Diseases of the circulatory system	1.1885	1.02204,  1.37994	2.25511646567887	0.0241260193802558	PHE01005
+PHD09001	Chronic obstructive pulmonary disease	Diseases of the respiratory system	1.8156	1.46090,  2.24438	5.4456375747962404	5.16201473599652e-8	PHE01005
+PHD11004	Osteoporosis	Diseases of the musculoskeletal system and connective tissue	1.6436	1.28667,  2.08477	4.0369550816496	5.4149431593108e-5	PHE01005
+PHD12001	Acute renal failure	Diseases of the genitourinary system	1.5169	1.22881,  1.86397	3.92060139710714	8.83282605670294e-5	PHE01005
+PHD12002	Chronic kidney disease	Diseases of the genitourinary system	1.3242	1.04545,  1.66716	2.35878869774164	0.0183346922432537	PHE01005

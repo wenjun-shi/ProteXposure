@@ -1,0 +1,14 @@
+FieldID	Trait	Category	OR	95%CI	Z	P	FactorID
+PHD01003	Lung cancer	Neoplasms	1.0968	1.03336, 1.16230	3.08096088282969	0.00206333753877608	PHE01003
+PHD02001	Septicaemia	Certain infectious and parasitic diseases	1.0416	1.00405, 1.07997	2.19204401569979	0.0283763285605927	PHE01003
+PHD03001	Hypothyroidism	Endocrine, nutritional and metabolic diseases	1.0434	1.00663, 1.08091	2.33828701225252	0.0193723643043508	PHE01003
+PHD03002	Type II diabetes	Endocrine, nutritional and metabolic diseases	1.0422	1.01576, 1.06904	3.16713430836044	0.00153949199019235	PHE01003
+PHD06001	Cataract	Diseases of the eye and adnexa	1.0210	1.00182, 1.04053	2.15227956459357	0.0313753423324252	PHE01003
+PHD08001	Essential (primary) hypertension	Diseases of the circulatory system	1.0280	1.00926, 1.04705	2.94718749136536	0.00320678703699531	PHE01003
+PHD08003	Coronary artery disease	Diseases of the circulatory system	1.0363	1.00342, 1.06974	2.18110783196722	0.0291754416970868	PHE01003
+PHD08006	Venous thromboembolic disease	Diseases of the circulatory system	0.9586	0.92348, 0.99453	-2.23611474566924	0.0253442557866233	PHE01003
+PHD09001	Chronic obstructive pulmonary disease	Diseases of the respiratory system	1.0629	1.03314, 1.09327	4.22848188465812	2.35273455793573e-5	PHE01003
+PHD10007	Irritable bowel syndrome	Diseases of the digestive system	1.0573	1.00982, 1.10607	2.40095483961762	0.0163523544508113	PHE01003
+PHD11004	Osteoporosis	Diseases of the musculoskeletal system and connective tissue	1.0462	1.01333, 1.07967	2.78971751162199	0.00527540477150442	PHE01003
+PHD12001	Acute renal failure	Diseases of the genitourinary system	1.0385	1.01100, 1.06657	2.7700156747091502	0.00560535950335215	PHE01003
+PHD12002	Chronic kidney disease	Diseases of the genitourinary system	1.0487	1.01876, 1.07926	3.23341028300512	0.0012232175015228	PHE01003
