@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pathway A: Environment</title>
+    <style>
+        /* --- 1. 基础样式 --- */
+        body { font-family: -apple-system, system-ui, sans-serif;  background-color: #dce8f8; /* 淡蓝色  */        color: #333;  margin: 0;}
+        .navbar { 
+            background: linear-gradient(to bottom, #4a89c7 0%, #407eb9 50%, #31679c 100%) !important; 
+            height: 70px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 0 40px; 
+            color: white;
+
+            box-shadow: 
+                0 4px 12px rgba(0,0,0,0.15), 
+                inset 0 1px 0 rgba(255, 255, 255, 0.3) !important; 
+            border-bottom: 2px solid #244b70; 
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2); 
+            position: relative;
+            z-index: 1000;
+        }
+        
+        /* interprote database 字体 */
+        .nav-brand {
+            display: flex;        align-items: center;       gap: 15px;
+            font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-size: 20px;
+            font-weight: 600; /* 加粗 */
+            letter-spacing: -0.5px; /* 字间距微收紧，显高级 */
+            text-transform: none; /* 保持原样 */
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);       /* 微弱外发光 */
+        }
+
+        .nav-logo { height: 45px; width: auto; }
+        
+        /* 结果框容器：1400px 宽屏适配 */
+        .container { max-width: 1400px; margin: 30px auto; padding: 0 30px; } 
+        .header-area { margin-bottom: 25px; }
+
+        .header-area h1 { font-size: 32px;  font-weight: 800;color: #1e293b; letter-spacing: -0.02em; }
+
+
+        /* --- 2. 选项卡样式 --- */
+        .tab-box { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
+            .tab-nav { 
+                display: flex; 
+                background: #ffffff; /* 改为纯白背景 */
+                border-bottom: 1px solid #e2e8f0; 
+            }
+
+            .tab-btn { 
+                flex: 1; 
+                padding: 18px; 
+                border: none; 
+                background: none; 
+                cursor: pointer; 
+                font-weight: 500; /* 稍微调细一点点 */
+                color: #a0aec0; /* 未选中时更淡一点 */
+                transition: 0.3s; 
+                font-size: 16px; 
+                position: relative;
+            }
+
+            .tab-btn:hover { 
+                background: #f8fafc; /* 悬停时淡淡的灰 */
+                color: #427eb8;
+            }
+
+            .tab-btn.active { 
+                color: #427eb8 !important; 
+                background: white; 
+                font-weight: 600;
+                border-bottom: 3px solid #427eb8 !important; /* 关键：蓝色粗下划线 */
+            }
+
+
+        .tab-content { display: none; /* 默认隐藏 */     width: 100%;}
+        .tab-content.active {display: block !important; /* 激活时强制显示 */ }
+
+
+        /* --- 3. 筛选器 --- */
+        .filter-section { 
+            margin-bottom: 30px;  padding: 20px; 
+            background: #f6f7ff !important; /* 颜色修改 */
+            border-radius: 12px;  border: none;  box-shadow: 0 4px 12px rgba(66, 126, 184, 0.08); /* 带一点点蓝色的淡阴影 */
+            display: flex; align-items: center;  gap: 20px; }
+            
+       
+       
+        .filter-group { display: flex; flex-direction: column; gap: 5px; }
+        select { padding: 12px; border-radius: 6px; border: 1px solid #cbd5e0; min-width: 350px; font-size: 14px; color: #4a5568; }
+
+        .search-btn { padding: 12px 25px; background: #2b6cb0; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.3s; margin-top: 22px; }
+        .search-btn:hover { background: #1a4971; }
+
+        /* --- 4. 结果展示区 (优化比例版) --- */
+        .results-grid {  display: grid;  grid-template-columns: 7fr 3fr;  gap: 3px; /* 间距收紧，让布局更紧凑 */align-items: start; /* 确保左右面板顶部对齐 */
+        }
+
+        .data-panel {  border: 1px solid #e2e8f0;  border-radius: 10px; padding: 5px; /* 适度缩小内边距 */background: #fff;  min-width: 0; /* 关键：防止 Flex/Grid 子元素溢出 */
+        }
+
+        .data-panel h4 { margin-top: 0; color: #2d3748;  border-bottom: 2px solid #edf2f7; padding-bottom: 12px; margin-bottom: 15px; font-size: 1.1rem;
+        }
+
+        /* 表格容器修改 */
+        .tsv-placeholder { background: #fafbfc; border: 1px solid #e2e8f0; border-radius: 6px;  height: 500px; /* 稍微增加高度，适应 70% 宽度下的展示 */
+            overflow-y: auto;  overflow-x: auto; /* 关键：如果表格太宽，允许横向滚动，不挤压右侧 */ font-family: 'Courier New', Courier, monospace; 
+            padding: 10px; font-size: 13px; line-height: 1.6; color: #4a5568; 
+        }
+
+        /* 2. 调整状态标签样式 */
+        .file-status {
+            font-size: 11px;color: #a0aec0;display: block;   /* 确保独占一行 */
+            text-align: right; margin-top: 0px !important;    /* 取消标签顶部的边距 */
+            padding-top: 0px !important;   /* 取消内边距 */
+            line-height: 0.2;              /* 紧凑行高 */
+        }
+
+            /* 性别选择器样式 */
+            .gender-selector { display: flex; align-items: center;    background: #fff;padding: 8px 15px; border-radius: 50px; 
+                box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            }
+
+            .btn-group {display: flex; background: #f1f5f9;border-radius: 30px;padding: 4px;
+            }
+
+            .gender-btn {border: none; padding: 8px 20px;border-radius: 25px; cursor: pointer;background: transparent;color: #64748b;
+                font-weight: 600; transition: all 0.3s ease;font-size: 14px;
+            }
+
+            .gender-btn.active { background: #2b6cb0;color: white;box-shadow: 0 2px 4px rgba(43, 108, 176, 0.3);
+            }
+
+            .gender-btn:hover:not(.active) {background: #e2e8f0;
+            }
+
+
+/* 下载按钮样式 */
+.download-btn {
+    float: right;
+    padding: 5px 8px;
+    background-color: #8fa4c7;
+    color: white;
+    border-radius: 4px;
+    font-size: 10px;
+    cursor: pointer;
+    border: none;
+    margin-top: -30px; /* 移动到标题行平行位置 */
+    transition: background 0.2s;
+}
+.download-btn:hover { background-color: #2d3748; }
+
+/* part2. 图片部分 */
+.img-placeholder {
+    position: relative !important;
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 450px; /* 可以适当增加高度，给大图更多空间 */
+    padding: 2px;  /* 将原本的 10px 或 20px 减小到 2px，几乎取消留白 */
+    overflow: hidden;
+}
+
+/* 2. 确保图片宽度能撑满 */
+.img-placeholder img {
+    width: 98%;      /* 强制宽度占用 98%，留 2% 防止贴边太死 */
+    height: 98%;     /* 强制高度占用 98% */
+    object-fit: contain; /* 保持比例的同时尽可能放大 */
+    display: block;
+    margin: 0 auto;
+}
+
+/* 2. 放大按钮--固定在顶部的空白槽里 */
+.zoom-btn {
+    position: absolute !important;
+    top: 2px !important;      /* 距离顶部更近 */
+    right: 2px !important;    /* 距离右侧更近 */
+    z-index: 9999 !important;
+    background: rgba(255, 255, 255, 0.85) !important; /* 增加一点透明度，更精致 */
+    border: 1px solid #cbd5e0 !important;
+    
+    /* 核心缩小参数 */
+    padding: 2px 6px !important;  /* 极小的内边距 */
+    font-size: 11px !important;   /* 缩小字体 */
+    line-height: 1 !important;    /* 紧凑行高 */
+    border-radius: 3px !important; /* 圆角也相应调小 */
+    
+    color: #4a5568 !important;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    transition: all 0.2s;
+}
+
+.zoom-btn:hover {
+    background: #fff !important;
+    color: #2b6cb0 !important;
+    border-color: #2b6cb0 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+/* 3. 模态框 (保持不变，但 z-index 设为最高) */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000; /* 比按钮更高 */
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.9);
+    justify-content: center;
+    align-items: center;
+}
+/* 针对 Part 2 的双图模式，稍微减小单个高度 */
+#dis-enrich-display, #dis-volcano-display {
+    height: 245px !important; /* 让两张图加起来不至于太占空间 */
+    margin-bottom: 0px;
+}
+/* Part 2 确保放大后的弹窗依然能看清 */
+.modal img {max-width: 95%;max-height: 95%;
+}
+
+
+/* --- 统一 TSV 表格样式 --- */
+.tsv-placeholder {
+    overflow: auto;         /* 允许内部滚动 */
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: #ffffff;
+}
+.tsv-placeholder table {
+    width: 100%;
+    border-collapse: separate; /* 必须用 separate 才能让 sticky 边框生效 */
+    border-spacing: 0;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; /* 现代科研风字体 */
+    font-size: 13px;
+    color: #2d3748;
+}
+/* --- 锁定表头 (Sticky Header) --- */
+.tsv-placeholder th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: #f7fafc; /* 浅灰色背景 */
+    font-weight: 600;
+    text-align: left;
+    padding: 12px 15px;
+    border-bottom: 2px solid #edf2f7;
+    white-space: nowrap; /* 强制表头不换行 */
+}
+/* --- 单元格样式：确保一行对应一行 --- */
+.tsv-placeholder td {
+    padding: 10px 15px;
+    border-bottom: 1px solid #edf2f7;
+    white-space: nowrap; /* 禁止换行，确保数据横向对齐 */
+    vertical-align: middle;
+}
+/* --- 斑马纹：增强可读性 --- */
+.tsv-placeholder tr:nth-child(even) {
+    background-color: #fcfcfc;
+}
+/* --- 悬停高亮 --- */
+.tsv-placeholder tr:hover {
+    background-color: #f0f7ff;
+}
+
+
+
+
+/* 强制让 active 状态的内容可见 */
+.tab-content.active {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    min-height: 500px !important; /* 给一个最小高度，防止塌陷 */
+    background-color: #ffffff !important; /* 确保背景不是透明的 */
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+/* 确保 Part 3 内部的显示区域不是空的 */
+#int-tsv-display {
+    min-height: 200px !important;
+    display: block !important;
+    clear: both !important;
+}
+
+
+
+/* 加载的小圈和字体 */
+.spinner {
+    width: 28px;     
+    height: 28px;
+    border: 3px solid rgba(43, 108, 176, 0.1);
+    border-top: 3px solid #2b6cb0; 
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite; /* 稍微加快一点点，显得更灵动 */
+    display: inline-block;
+    vertical-align: middle; /* 方便与文字对齐 */
+}
+/* 统一字体格式 */
+.loading-container {
+    text-align: center;
+    padding: 60px 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+.loading-text {
+    color: #4a5568;
+    font-size: 15px;       /* 标准学术字号 */
+    font-weight: 600;      /* 半粗体，更有质感 */
+    margin-top: 12px;
+    letter-spacing: -0.01em;
+}
+.loading-subtext {
+    font-size: 12px;
+    color: #a0aec0;
+    margin-top: 6px;
+    font-family: inherit; /* 确保不使用奇怪的等宽字体 */
+}
+
+
+
+
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-brand">
+        <img src="logo_1.png" alt="Logo" class="nav-logo">
+        <span>InterProte Database</span>
+    </div>
+        <div style="font-size: 14px;">
+            <a href="InterPro_1.html" style="color: white; text-decoration: none;">← Back to Home</a>
+        </div>
+    </nav>
+
+
+        <div class="header-area" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1>Pathway A：Environment and protein interaction analysis</h1>
+                <p style="color: #666; margin: 0;">Explore the interaction between environmental factors and proteins on diseases.</p>
+            </div>
+
+            <div class="gender-selector">
+                <span style="margin-right: 15px; font-weight: 600; color: #7199df;">Population:</span>
+                <div class="btn-group">
+                    <button class="gender-btn active" onclick="setGender('all', this)">All</button>
+                    <button class="gender-btn" onclick="setGender('male', this)">Male</button>
+                    <button class="gender-btn" onclick="setGender('female', this)">Female</button>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="tab-box">
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="openTab(event, 'part1')">1. Exposure & Disease</button>
+                <button class="tab-btn" onclick="openTab(event, 'part2')">2. Protein & Disease</button>
+                <button class="tab-btn" onclick="openTab(event, 'part3')">3. Exposure & Protein Interaction</button>
+            </div>
+
+
+
+<div id="part1" class="tab-content active">
+    <div class="filter-section">
+        <div class="filter-group">
+            <label><strong>Environmental Category:</strong></label>
+            <select id="category-select" onchange="updateExposureOptions()">
+                <option value="">-- Select Environmental Category --</option>
+                <option value="pollution">Residential air pollution</option>
+                <option value="greenspace">Greenspace and coastal proximity</option>
+                <option value="sociodemographics">Sociodemographics</option>
+                <option value="lifestyle">Healthy lifestyle</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label><strong>Specific Factor:</strong></label>
+            <select id="exposure-select">
+                <option value="">-- Choose Specific Factor --</option>
+            </select>
+        </div>
+        
+        <button class="search-btn" onclick="runQuery()">Query Data</button>
+    </div>
+
+    <div class="results-grid">
+        <div class="data-panel">
+            <h4 style="margin: 0; padding-left: 20px;">📋 Association Statistics</h4>
+            <button class="download-btn" onclick="downloadTSV('tsv-display')">🡻 Download</button>
+            
+                     <div id="tsv-display" class="tsv-placeholder" 
+                style="display: flex; align-items: center; justify-content: center; min-height: 400px; background: #fcfcfc; border: 1px solid #e2e8f0; border-radius: 8px; font-family: sans-serif;">
+                <div style="font-size: 20px; color: #64748b; font-weight: 500; letter-spacing: 0.5px;">
+                    Please select a factor and click "Query Data"
+                </div>
+            </div>   
+
+            <span id="tsv-status" class="file-status"></span>
+        </div>
+        <div class="data-panel">
+            <h4 style="margin: 0; padding-left: 20px;">📊 Visualization Plots</h4>
+
+            <div id="plot-display" class="img-placeholder">
+                <p style="color:#a0aec0;"></p>
+                <span id="png-status" class="file-status"></span>
+            </div>
+        </div>
+    </div>
+
+
+
+
+</div> <div id="part2" class="tab-content">
+    <div class="filter-section">
+        <div class="filter-group">
+            <label><strong> Disease Category:</strong></label>
+            <select id="dis-cat-select" onchange="updateDiseaseOptions()">
+                <option value="">-- Select Disease Category --</option>
+                <option value="neoplasms">Neoplasms</option>
+                <option value="Certain infectious and parasitic diseases">Certain infectious and parasitic diseases</option>
+                <option value="Endocrine, nutritional and metabolic diseases">Endocrine, nutritional and metabolic diseases</option>
+                <option value="Mental and behavioural disorders">Mental and behavioural disorders</option>
+                <option value="Nervous system">Nervous system</option> 
+                <option value="Eye and adnexa">Eye and adnexa</option>
+                <option value="Ear and mastoid process">Ear and mastoid process</option>
+                <option value="Circulatory system">Circulatory system</option> 
+                <option value="Respiratory system">Respiratory system</option> 
+                <option value="Digestive system">Digestive system</option> 
+                <option value="Musculoskeletal system and connective tissue">Musculoskeletal system and connective tissue</option>
+                <option value="Genitourinary system">Genitourinary system</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label><strong> Specific Disease:</strong></label>
+            <select id="dis-detail-select">
+                <option value="">-- Choose Specific Disease --</option>
+            </select>
+        </div>
+        
+        <button class="search-btn" onclick="runDiseaseProteinQuery()">Query Results</button>
+    </div>
+
+    <div class="results-grid">
+        <div class="data-panel">
+            <h4 style="margin: 0; padding-left: 20px;">🔬 Protein-wide Association Study (PWAS)</h4>
+            <button class="download-btn" onclick="downloadTSV('dis-tsv-display')">🡻 Download</button> 
+        <div id="dis-tsv-display" class="tsv-placeholder" 
+            style="display: flex; align-items: center; justify-content: center; min-height: 400px; background: #fcfcfc; border: 1px solid #e2e8f0; border-radius: 8px; font-family: sans-serif;">
+            <div style="font-size: 20px; color: #64748b; font-weight: 500; letter-spacing: 0.5px;">
+                Please select a disease to view protein association data.
+            </div>
+        </div>
+        </div>
+
+        <div class="data-panel">
+            <h4 style="margin: 0; padding-left: 20px;">📊 Visualization Plots</h4>   
+            <div id="dis-plot-container" style="display: flex; flex-direction: column; gap: 20px;">               
+                <div id="dis-enrich-display" class="img-placeholder" style="height: 400px;"></div>
+                <div id="dis-volcano-display" class="img-placeholder" style="height: 400px;"></div>
+            </div>
+        </div>
+    </div> <div class="data-panel" style="margin-top: 30px; width: 100%; box-sizing: border-box; clear: both;">
+        <h4 style="margin: 0; padding-left: 20px;">🕸️ Functional Enrichment Analysis</h4>          
+        <div style="display: flex; gap: 25px; width: 100%; box-sizing: border-box;">
+            <div style="flex: 1; min-width: 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin: 5px 0 10px 0;">
+                    <h5 style="margin: 0; padding-left: 20px; color: #2d3748;">Detailed KEGG Pathways</h5>
+                    <button class="download-btn" onclick="downloadTSV('dis-kegg-table')" style="padding: 4px 10px; font-size: 12px;">🡻 Download</button>
+                </div>
+
+            <div id="dis-kegg-table" class="tsv-placeholder" 
+                style="display: flex; align-items: center; justify-content: center; min-height: 250px; background: #fcfcfc; border: 1px solid #e2e8f0; border-radius: 8px; font-family: sans-serif; overflow-x: auto;">
+                <div style="font-size: 16px; color: #64748b; font-weight: 500; letter-spacing: 0.5px;">
+                    Select a disease to view KEGG results
+                </div>
+            </div>
+
+            </div>
+
+            <div style="flex: 1; min-width: 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin: 5px 0 10px 0;">
+                    <h5 style="margin: 0; padding-left: 20px; color: #2d3748;">Detailed GO Terms </h5>
+                    <button class="download-btn" onclick="downloadTSV('dis-go-table')" style="padding: 4px 10px; font-size: 12px;">🡻 Download</button>
+                </div>
+
+            <div id="dis-go-table" class="tsv-placeholder" 
+                style="display: flex; align-items: center; justify-content: center; min-height: 250px; background: #fcfcfc; border: 1px solid #e2e8f0; border-radius: 8px; font-family: sans-serif; overflow-x: auto;">
+                <div style="font-size: 16px; color: #64748b; font-weight: 500; letter-spacing: 0.5px;">
+                    Select a disease to view GO results
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div> 
+
+
+
+
+<div id="part3" class="tab-content">
+    <div class="filter-section" style="background: #f8fafc; margin-bottom: 20px;">
+        <div style="display: flex; gap: 30px; align-items: center; width: 100%;">
+    <div class="filter-group" style="margin-right: 20px;">
+        <label style="font-size: 16px;"><strong>Specific Disease :</strong></label>
+        <span id="display-selected-dis" style="color: #2b6cb0; font-weight: bold; font-size: 18px; margin-left: 8px;">-</span>
+    </div>
+    <div class="filter-group" style="margin-right: 20px;">
+        <label style="font-size: 16px;"><strong>Environmental factor:</strong></label>
+        <span id="display-selected-exp" style="color: #38a169; font-weight: bold; font-size: 18px; margin-left: 8px;">-</span>
+    </div>
+            <div class="filter-group"style="margin-right: 20px;">
+                <label><strong>Gender:</strong></label>
+                <span id="display-selected-gender" style="color: #805ad5; font-weight: bold;font-size: 18px; margin-left: 8px;">-</span>
+            </div>      
+             <button id="int-query-trigger" class="search-btn" onclick="runInteractionQuery()" style="margin-left: auto; width: 200px;">Run Interaction Query</button>
+        </div>
+    </div>
+
+    <div class="results-grid" style="display: block;"> <div class="data-panel" style="width: 100%;">
+            <h4 style="margin: 0; padding-left: 20px;">🔄 Interaction Analysis Results</h4>
+            <button id="download-int-btn" class="download-btn" onclick="downloadTSV('int-tsv-display')" style="display:none;">🡻 Download</button>
+
+            <div id="int-tsv-display" class="tsv-placeholder" 
+                style="display: flex; justify-content: center; min-height: 400px; background: #fcfcfc; border: 1px solid #e2e8f0; border-radius: 8px; font-family: sans-serif; overflow: auto; width: 100%;">
+                <div style="padding-top: 180px; font-size: 18px; color: #64748b; font-weight: 500; letter-spacing: 0.5px; text-align: center; width: 100%;">
+                    Please confirm the selections above and click "Run Interaction Query"
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+// 1. 全局配置与数据映射
+let currentGender = "all"; // 默认性别后缀
+let currentSelectedPHID = "";
+let currentSelectedPHName = "";
+let currentSelectedDISID = "";
+let currentSelectedDISName = "";
+
+const exposureMapping = {
+    "pollution": [
+        { id: "PHE01001", name: "Nitrogen dioxide air pollution; 2010" },
+        { id: "PHE01002", name: "Nitrogen oxides air pollution; 2010" },
+        { id: "PHE01003", name: "Particulate matter air pollution (pm10); 2010" },
+        { id: "PHE01004", name: "Particulate matter air pollution (pm2.5); 2010" },
+        { id: "PHE01005", name: "Particulate matter air pollution (pm2.5) absorbance; 2010" },
+        { id: "PHE01006", name: "Particulate matter air pollution 2.5-10um; 2010" },
+        { id: "PHE01007", name: "Traffic intensity on the nearest road" },
+        { id: "PHE01008", name: "Inverse distance to the nearest road" },
+        { id: "PHE01009", name: "Traffic intensity on the nearest major road" },
+        { id: "PHE01010", name: "Inverse distance to the nearest major road" },
+        { id: "PHE01011", name: "Total traffic load on major roads" },
+        { id: "PHE01012", name: "Close to major road" },
+        { id: "PHE01013", name: "Sum of road length of major roads within 100m" },
+        { id: "PHE01014", name: "Nitrogen dioxide air pollution; 2005" },
+        { id: "PHE01015", name: "Nitrogen dioxide air pollution; 2006" },
+        { id: "PHE01016", name: "Nitrogen dioxide air pollution; 2007" },
+        { id: "PHE01017", name: "Particulate matter air pollution (pm10); 2007" },
+        { id: "PHE01018", name: "Average daytime sound level of noise pollution" },
+        { id: "PHE01019", name: "Average evening sound level of noise pollution" },
+        { id: "PHE01020", name: "Average night-time sound level of noise pollution" },
+        { id: "PHE01021", name: "Average 16-hour sound level of noise pollution" },
+        { id: "PHE01022", name: "Average 24-hour sound level of noise pollution" }
+    ],
+    "greenspace": [
+        { id: "PHE02001", name: "Greenspace percentage, buffer 1000m" },
+        { id: "PHE02002", name: "Domestic garden percentage, buffer 1000m" },
+        { id: "PHE02003", name: "Water percentage, buffer 1000m" },
+        { id: "PHE02004", name: "Greenspace percentage, buffer 300m" },
+        { id: "PHE02005", name: "Domestic garden percentage, buffer 300m" },
+        { id: "PHE02006", name: "Water percentage, buffer 300m" },
+        { id: "PHE02007", name: "Natural environment percentage, buffer 1000m" },
+        { id: "PHE02008", name: "Natural environment percentage, buffer 300m" },
+        { id: "PHE02009", name: "Distance (Euclidean) to coast" }
+    ],
+    "sociodemographics": [
+        { id: "PHE03001", name: "Education" },
+        { id: "PHE03002", name: "Income" },
+        { id: "PHE03003", name: "Employment" },
+        { id: "PHE03004", name: "Socioeconomic status" },
+        { id: "PHE03005", name: "Townsend deprivation index" }
+    ],
+    "lifestyle": [
+        { id: "PHE04001", name: "Current tobacco smoking" },
+        { id: "PHE04002", name: "Past tobacco smoking" },
+        { id: "PHE04003", name: "Light smoker" },
+        { id: "PHE04004", name: "No smoke" },
+        { id: "PHE04005", name: "Activity" },
+        { id: "PHE04006", name: "Fruit intake" },
+        { id: "PHE04007", name: "Vegetable intake" },
+        { id: "PHE04008", name: "Fish intake" },
+        { id: "PHE04009", name: "Diary intake" },
+        { id: "PHE04010", name: "Vegetable oil intake" },
+        { id: "PHE04011", name: "Whole grain intake" },
+        { id: "PHE04012", name: "Refine grain intake" },
+        { id: "PHE04013", name: "Processed meat intake" },
+        { id: "PHE04014", name: "Non-processed meat intake" },
+        { id: "PHE04015", name: "Sugar intake" },
+        { id: "PHE04016", name: "Healthy diet" },
+        { id: "PHE04017", name: "No alcohol" },
+        { id: "PHE04018", name: "Healthy Lifestyle" }
+    ]
+};
+
+/**
+ * 联动更新函数：根据选择的 Category 更新 Specific Exposure 下拉框-----part1
+ */
+function updateExposureOptions() {
+    // 1. 获取两个下拉框的 DOM 元素
+    const catSelect = document.getElementById("category-select");
+    const expSelect = document.getElementById("exposure-select");
+    // 2. 获取当前选中的大类值
+    const selectedCat = catSelect.value;
+    // 3. 清空具体项下拉框的所有旧内容，只留一个默认提示
+    expSelect.innerHTML = '<option value="">-- Select Specific Exposure --</option>';
+    // 4. 如果选了有效的大类，并且映射表里有这个类
+    if (selectedCat && exposureMapping[selectedCat]) {
+        // 遍历映射表中的数组，生成新的 <option>
+        exposureMapping[selectedCat].forEach(item => {
+            const option = document.createElement("option");
+            option.value = item.id;    // 存入 PHE01001
+            option.text = item.name;   // 显示 Nitrogen dioxide...
+            expSelect.appendChild(option);
+        });
+        console.log(`Successfully updated options for: ${selectedCat}`);
+    } else {
+        // 如果没选大类，恢复原始提示
+        expSelect.innerHTML = '<option value="">-- First choose a category --</option>';
+    }
+}
+
+
+const diseaseMapping = {
+    "neoplasms": [
+        { id: "PHD01001", name: "Colorectal cancer" },
+        { id: "PHD01001", name: "Colorectal cancer" },
+        { id: "PHD01002", name: "Liver cancer" },
+        { id: "PHD01003", name: "Lung cancer" },
+        { id: "PHD01004", name: "Malignant melanoma" },
+        { id: "PHD01005", name: "Non-Hodgkin Lymphoma" },
+        { id: "PHD01006", name: "Breast cancer" },
+        { id: "PHD01007", name: "Uterine cancer" },
+        { id: "PHD01008", name: "Ovarian cancer" },
+        { id: "PHD01009", name: "Prostate cancer" },
+        { id: "PHD01010", name: "Kidney cancer" },
+        { id: "PHD01011", name: "Bladder cancer" },
+        { id: "PHD01012", name: "Thyroid cancer" },
+        { id: "PHD01013", name: "Leukaemia" },
+        { id: "PHD01014", name: "Leiomyoma of uterus" }
+    ],
+    "Certain infectious and parasitic diseases": [
+        { id: "PHD02001", name: "Septicaemia" }
+    ],
+
+    "Endocrine, nutritional and metabolic diseases": [
+        { id: "PHD03001", name: "Hypothyroidism" },
+        { id: "PHD03002", name: "Type II diabetes" }
+    ],
+
+    "Mental and behavioural disorders": [
+        { id: "PHD04001", name: "Dementia" },
+        { id: "PHD04002", name: "Major depression disorder" },
+        { id: "PHD04003", name: "Bipolar disorder" },
+        { id: "PHD04004", name: "Anxiety disorder" },
+        { id: "PHD04005", name: "Schizophrenia" }
+    ],
+
+    "Nervous system": [
+        { id: "PHD05001", name: "Parkinson disease" },
+        { id: "PHD05002", name: "Epilepsy" },
+        { id: "PHD05003", name: "Sleep apnoea" }
+    ],
+
+    "Eye and adnexa": [
+        { id: "PHD06001", name: "Cataract" },
+        { id: "PHD06002", name: "Degeneration of macula and posterior pole" },
+        { id: "PHD06003", name: "Primary open angle glaucoma" }
+    ],
+
+    "Ear and mastoid process": [
+        { id: "PHD07001", name: "Hearing loss" }
+    ],
+
+    "Circulatory system": [
+        { id: "PHD08001", name: "Essential (primary) hypertension" },
+        { id: "PHD08002", name: "Angina pectoris" },
+        { id: "PHD08003", name: "Coronary artery disease" },
+        { id: "PHD08004", name: "Atrial fibrillation" },
+        { id: "PHD08005", name: "Dilated cardiomyopathy" },
+        { id: "PHD08006", name: "Venous thromboembolic disease" }
+    ],
+
+    "Respiratory system": [
+        { id: "PHD09001", name: "Chronic obstructive pulmonary disease" },
+        { id: "PHD09002", name: "Asthma" }
+    ],
+
+    "Digestive system": [
+        { id: "PHD10001", name: "Gastro-oesophageal reflux disease" },
+        { id: "PHD10002", name: "Polyp of stomach and duodenum" },
+        { id: "PHD10003", name: "Crohns disease" },
+        { id: "PHD10004", name: "Ulcerative colitis" },
+        { id: "PHD10005", name: "Gallstone ileus" },
+        { id: "PHD10006", name: "Diverticular disease of intestine" },
+        { id: "PHD10007", name: "Irritable bowel syndrome" },
+        { id: "PHD10008", name: "Rectal or colon polyps" },
+        { id: "PHD10009", name: "Non-alcoholic fatty liver disease" },
+        { id: "PHD10010", name: "Cholelithiasis" }
+    ],
+
+    "Musculoskeletal system and connective tissue": [
+        { id: "PHD11001", name: "Rheumatoid arthritis" },
+        { id: "PHD11002", name: "Gout" },
+        { id: "PHD11003", name: "Osteoarthritis" },
+        { id: "PHD11004", name: "Osteoporosis" }
+    ],
+
+    "Genitourinary system": [
+        { id: "PHD12001", name: "Acute renal failure" },
+        { id: "PHD12002", name: "Chronic kidney disease" },
+        { id: "PHD12003", name: "Kidney failure" },
+        { id: "PHD12004", name: "Calculus of kidney" },
+        { id: "PHD12005", name: "Hyperplasia of prostate" },
+        { id: "PHD12006", name: "Polyp of corpus uteri" }
+    ]
+};
+
+
+// 联动更新函数：根据选择的 Disease Category 更新 Specific Disease 下拉框
+function updateDiseaseOptions() {
+    // 1. 获取疾病部分的两个下拉框 DOM 元素
+    const catSelect = document.getElementById("dis-cat-select");
+    const detailSelect = document.getElementById("dis-detail-select");
+    
+    if (!catSelect || !detailSelect) {
+        console.error("Could not find disease select elements. Please check IDs.");
+        return;
+    }
+
+    // 2. 获取当前选中的大类值
+    const selectedCat = catSelect.value;
+    console.log("Disease category changed to:", selectedCat);
+
+    // 3. 清空具体项下拉框，只留一个默认提示
+    detailSelect.innerHTML = '<option value="">-- Select Specific Disease --</option>';
+
+    // 4. 如果选了有效的大类，并且映射表 (diseaseMapping) 里有这个类
+    if (selectedCat && diseaseMapping[selectedCat]) {
+        // 遍历映射表中的数组，生成新的 <option>
+        diseaseMapping[selectedCat].forEach(item => {
+            const option = document.createElement("option");
+            option.value = item.id;    // 存储 PHD01001
+            option.text = item.name;   // 显示 Colorectal cancer
+            detailSelect.appendChild(option);
+        });
+        console.log(`Successfully loaded ${diseaseMapping[selectedCat].length} diseases.`);
+    } else {
+        // 如果没选大类或没找到对应数据
+        detailSelect.innerHTML = '<option value="">-- First choose a category --</option>';
+        if (selectedCat) console.warn("No data found for category:", selectedCat);
+    }
+}
+
+
+
+// ==========================================
+// 2. 通用功能函数 
+// ==========================================
+
+// 设置性别并更新 UI
+function setGender(gender, btn) {
+    currentGender = gender.toLowerCase();
+    document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    console.log("Gender switched to:", currentGender);
+    
+    // 提示：切换性别后，建议提醒用户重新点击 Query Data 以刷新数据
+}
+
+// --- 通用表格渲染：支持表头锁定、单行对齐与现代样式 ---
+function renderTable(tsvText, targetId) {
+    const targetElement = document.getElementById(targetId);
+    if (!targetElement) return;
+
+    // 1. 兼容处理换行符并清洗数据
+    const lines = tsvText.trim().split(/\r?\n/);
+    
+    if (lines.length === 0 || (lines.length === 1 && lines[0] === "")) {
+        targetElement.innerHTML = '<p style="padding:20px; color:#a0aec0;">No data available.</p>';
+        return;
+    }
+    // 2. 构建 HTML 表格 (使用 standardized 结构)
+    let html = '<table><thead><tr>';
+
+    // 处理表头 (第一行)
+    const headers = lines[0].split('\t');
+    headers.forEach(header => {
+        html += `<th>${header.trim()}</th>`;
+    });
+    html += '</tr></thead><tbody>';
+
+    // 处理数据行 (从第二行开始)
+    for (let i = 1; i < lines.length; i++) {
+        const rowContent = lines[i].trim();
+        if (!rowContent) continue;
+        
+        const cells = rowContent.split('\t');
+        html += '<tr>';
+        cells.forEach(cell => {
+            html += `<td>${cell.trim()}</td>`;
+        });
+        html += '</tr>';
+    }
+
+    html += '</tbody></table>';
+    
+    // 3. 写入页面
+    targetElement.innerHTML = html;
+}
+
+
+// 选项卡切换
+function openTab(evt, tabName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tab-btn");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].classList.remove("active");
+    }
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.classList.add("active");
+
+    if (tabName === 'part3') syncInteractionInputs();
+}
+
+
+// --- 功能 1: 下载 TSV ---
+function downloadTSV(containerId) {
+    const table = document.getElementById(containerId).querySelector('table');
+    if (!table) { alert("No data to download!"); return; }
+
+    let tsvContent = "";
+    const rows = table.querySelectorAll("tr");
+    
+    rows.forEach(row => {
+        const cols = row.querySelectorAll("td, th");
+        const rowData = Array.from(cols).map(c => c.innerText).join("\t");
+        tsvContent += rowData + "\r\n";
+    });
+
+    const blob = new Blob([tsvContent], { type: 'text/tab-separated-values' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Results_${new Date().getTime()}.tsv`;
+    a.click();
+}
+
+// --- 功能 2: 下载图片 ---
+function downloadImage(containerId) {
+    const img = document.getElementById(containerId).querySelector('img');
+    if (!img) { alert("No image to download!"); return; }
+    
+    const a = document.createElement('a');
+    a.href = img.src;
+    a.download = img.src.split('/').pop(); // 使用原始文件名
+    a.click();
+}
+
+// --- 功能 3: 放大图片 ---
+function zoomImage(containerId) {
+    const img = document.getElementById(containerId).querySelector('img');
+    if (!img) return;
+    
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImg');
+    
+    modal.style.display = "flex";
+    modalImg.src = img.src;
+}
+
+
+// ==========================================
+// 3. 逻辑函数
+// ==========================================
+// part1部分
+async function runQuery() {
+    const expSelect = document.getElementById("exposure-select");
+    currentSelectedPHID = expSelect.value;
+    
+    if (!currentSelectedPHID) { 
+        alert("Please select a specific environmental factor first."); 
+        return; 
+    }
+
+    const folderPath = `Logit/UKB_${currentGender}/E-D/${currentSelectedPHID}`;
+    const tsvUrl = `${folderPath}/effect_size_${currentGender}_${currentSelectedPHID}.tsv`;
+    const pngUrl = `${folderPath}/top_trait_${currentGender}_${currentSelectedPHID}.png`;
+
+    //Loading ---
+    const tsvDisplay = document.getElementById("tsv-display");
+    const plotDisplay = document.getElementById("plot-display");
+
+    const loadingHtml = `
+        <div class="loading-container">
+            <div class="spinner"></div>
+            <div class="loading-text">Loading data...</div>
+        </div>`;
+
+    tsvDisplay.innerHTML = loadingHtml;
+    plotDisplay.innerHTML = loadingHtml;
+
+    // --- 2. 读取并渲染 TSV 数据 ---
+    try {
+        const response = await fetch(tsvUrl);
+        if (response.ok) {
+            const tsvText = await response.text();
+            tsvDisplay.style.display = "block";  // 这个是字体部分
+
+            renderTable(tsvText.trim(), "tsv-display");
+        } else {
+            throw new Error("404");
+        }
+    } catch (error) {
+        tsvDisplay.innerHTML = `
+            <div style="padding:40px; text-align:center; color:#a0aec0; background:#f8fafc; border-radius:8px;">
+                <div style="font-size:24px; margin-bottom:8px;">📋</div>
+                <div style="font-size:14px;">Data not found</div>
+            </div>`;
+    }
+
+    // --- 3. 渲染图片 ---
+    const tempImg = new Image();
+    tempImg.onload = () => {
+        plotDisplay.innerHTML = `
+            <button class="zoom-btn" onclick="zoomImage('plot-display')">🔍 Zoom</button>
+            <img src="${pngUrl}" style="width:100%; height:100%; object-fit:contain;">
+        `;
+    };
+
+    tempImg.onerror = () => {
+        plotDisplay.innerHTML = `
+            <div style="padding:40px; text-align:center; color:#a0aec0; background:#f8fafc; border-radius:8px; border:1px dashed #e2e8f0;">
+                <div style="font-size:24px; margin-bottom:8px;">📊</div>
+                <div style="font-size:14px;">Plot not found</div>
+            </div>`;
+    };
+    tempImg.src = pngUrl;
+}
+
+
+
+
+// part1，part2——————图片放大功能
+function zoomImage(containerId) {
+    console.log("Zooming container:", containerId); // 调试用，可在控制台查看是否触发
+    
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    // 关键点：在当前容器内寻找 img 标签
+    const img = container.querySelector('img');
+    if (!img || !img.src) {
+        console.error("No image found in " + containerId);
+        return;
+    }
+    // 1. 创建全屏背景遮罩
+    const modal = document.createElement('div');
+    modal.id = "image-zoom-modal"; // 给个 ID 方便管理
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        cursor: zoom-out;
+        transition: opacity 0.3s ease;
+    `;
+
+    // 2. 创建放大后的图片对象
+    const fullImg = new Image();
+    fullImg.src = img.src;
+    fullImg.style.cssText = `
+        max-width: 95%;
+        max-height: 95%;
+        object-fit: contain;
+        border-radius: 4px;
+        box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        user-select: none;
+    `;
+
+    // 3. 点击任意位置关闭
+    modal.onclick = () => {
+        modal.style.opacity = '0';
+        setTimeout(() => {
+            if (document.body.contains(modal)) {
+                document.body.removeChild(modal);
+            }
+        }, 200);
+    };
+
+    modal.appendChild(fullImg);
+    document.body.appendChild(modal);
+}
+
+
+
+
+
+// --- Part 2: Disease-Protein Logic (支持双图 + 左右双富集表) ---
+async function runDiseaseProteinQuery() {
+    const detailSelect = document.getElementById("dis-detail-select");
+    currentSelectedDISID = detailSelect.value;
+    if (!currentSelectedDISID) return;
+
+    const folderPath = `Logit/UKB_${currentGender}/P-D`;
+    
+    // 1. 构建所有文件的 URL
+    const tsvUrl = `${folderPath}/effect_size_${currentSelectedDISID}_${currentGender}.tsv`;
+    const enrichUrl = `${folderPath}/${currentSelectedDISID}_enrichment_plot.png`;
+    const volcanoUrl = `${folderPath}/${currentSelectedDISID}_volcano_plot.png`;
+    
+    // KEGG 和 GO 的 TSV 路径
+    const keggUrl = `${folderPath}/${currentSelectedDISID}_enrichment_KEGG.tsv`;
+    const goUrl   = `${folderPath}/${currentSelectedDISID}_enrichment_GO.tsv`;
+
+    // 2. 加载主关联 TSV
+    loadSimpleTSV(tsvUrl, "dis-tsv-display");
+
+    // 3. 加载两个富集分析 TSV (左右布局)
+    loadSimpleTSV(keggUrl, "dis-kegg-table");
+    loadSimpleTSV(goUrl, "dis-go-table");
+
+    // 4. 加载两张图片
+    loadSimpleImage('dis-enrich-display', enrichUrl);
+    loadSimpleImage('dis-volcano-display', volcanoUrl);
+}
+
+ // TSV 加载与渲染
+async function loadSimpleTSV(url, containerId) {
+    const container = document.getElementById(containerId);
+
+// 注入 Loading 动画
+    container.innerHTML = `
+        <div class="loading-container" style="padding: 30px 10px;">
+            <div class="spinner"></div>
+            <div class="loading-text" style="font-size: 13px;">Loading table...</div>
+        </div>`;
+
+    try {
+        const response = await fetch(url);
+        if (response.ok) {
+            const text = await response.text();
+            container.style.display = "block"; 
+            renderTable(text.trim(), containerId);
+        } else {
+            container.innerHTML = `
+                <div style="padding:40px; text-align:center; color:#a0aec0; background:#f8fafc; border-radius:8px;">
+                <div style="font-size:24px; margin-bottom:8px;">📋</div>
+                <div style="font-size:14px;">Data not found</div>
+            </div>`;
+        }
+    } catch (err) {
+        container.innerHTML = `<div style="color:#e53e3e; padding:20px;">Load error</div>`;
+    }
+}
+
+// 图片
+function loadSimpleImage(containerId, url) {
+    const display = document.getElementById(containerId);
+
+    // 注入 Loading 动画
+        display.innerHTML = `
+            <div class="loading-container" style="padding: 40px 10px;">
+                <div class="spinner"></div>
+                <div class="loading-text" style="font-size: 13px;">Loading plot...</div>
+            </div>`;
+
+    const img = new Image();
+    img.onload = () => {
+        display.innerHTML = `
+            <button class="zoom-btn" onclick="zoomImage('${containerId}')">🔍 Zoom</button>
+            <img src="${url}" style="width:100%; height:100%; object-fit:contain;">
+        `;
+    };
+    img.onerror = () => {
+        display.innerHTML = `
+                <div style="padding:40px; text-align:center; color:#a0aec0; background:#f8fafc; border-radius:8px; border:1px dashed #e2e8f0;">
+                <div style="font-size:24px; margin-bottom:8px;">📊</div>
+                <div style="font-size:14px;">Plot not found</div>
+            </div>`;
+    };
+    img.src = url;
+}
+
+
+
+// 互不干扰3个界面函数
+function openTab(evt, tabName) {
+    var i, tabcontent, tablinks;
+
+    // 1. 获取所有选项卡内容块并强制隐藏
+    tabcontent = document.getElementsByClassName("tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none"; 
+        tabcontent[i].classList.remove("active");
+    }
+    // 2. 移除所有按钮的 active 类
+    tablinks = document.getElementsByClassName("tab-btn");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // 3. 显示当前点击的选项卡，并设为 active
+    var targetTab = document.getElementById(tabName);
+    if (targetTab) {
+        targetTab.style.display = "block";
+        targetTab.classList.add("active");
+    }
+
+    // 4. 为当前按钮添加 active 类
+    evt.currentTarget.className += " active";
+
+    // 5. 如果进入 Part 3，执行同步逻辑
+    if (tabName === 'part3') {
+        syncInteractionInputs();
+    }
+}
+
+
+
+// part3部分
+function syncInteractionInputs() {
+    const rawGender = typeof currentGender !== 'undefined' ? currentGender : "all";
+    // 首字母大写，其余小写
+    const formattedGender = rawGender.charAt(0).toUpperCase() + rawGender.slice(1).toLowerCase();
+    // 获取下拉框元素
+    const expSelect = document.getElementById("exposure-select");
+    const disSelect = document.getElementById("dis-detail-select");
+    // 抓取真实名称 (Text) 而不是代码 (Value)
+    let expName = "-";
+    if (expSelect && expSelect.selectedIndex !== -1) {
+        expName = expSelect.options[expSelect.selectedIndex].text;
+    }
+    let disName = "-";
+    if (disSelect && disSelect.selectedIndex !== -1) {
+        disName = disSelect.options[disSelect.selectedIndex].text;
+    }
+    // Part 3 文字显示
+    document.getElementById("display-selected-exp").innerText = expName;
+    document.getElementById("display-selected-dis").innerText = disName;
+    document.getElementById("display-selected-gender").innerText = formattedGender;
+}
+
+
+// 执行查询
+async function runInteractionQuery() {
+    const gender = currentGender; 
+    const expID = document.getElementById("exposure-select").value; 
+    const disID = document.getElementById("dis-detail-select").value; 
+    const displayArea = document.getElementById("int-tsv-display");
+
+    if (!expID || !disID) {
+        alert("Please select Exposure (Part 1) and Disease (Part 2) first.");
+        return;
+    }
+
+    // 路径：Logit/项目名/EP-D/疾病代码_性别/interaction_暴露代码_性别.tsv
+    const filePath = `Logit/UKB_${gender}/EP-D/${disID}_${gender}/interaction_${expID}_${gender}.tsv`;
+    
+    // 加载代码
+        displayArea.innerHTML = `
+        <div class="loading-container">
+            <div class="spinner"></div>
+            <div class="loading-text">Loading table...</div>
+            <div style="font-size: 12px; color: #a0aec0; margin-top: 8px; font-family: monospace;">
+            </div>
+        </div>`;
+    
+    try {
+        const response = await fetch(filePath);
+        if (!response.ok) throw new Error("File not found");
+        
+        const data = await response.text();
+        displayArea.style.display = "block";
+        // tsv风格渲染
+        renderPrettyTable(data, 'int-tsv-display');
+        
+        // 下载按钮
+        document.getElementById("download-int-btn").style.display = "block";
+
+} catch (err) {
+        displayArea.innerHTML = `
+            <div style="
+                padding: 40px 20px; 
+                color: #a0aec0; 
+                background: #f8fafc; 
+                border: 2px dashed #f8fafc; 
+                border-radius: 12px; 
+                text-align: center;
+                margin-top: 20px;
+            ">
+                <div style="font-size: 48px; margin-bottom: 10px;">🚫</div>
+                <b style="font-size: 24px; display: block; margin-bottom: 8px;">No Interaction Data Found</b>
+                <p style="font-size: 14px; color: #9b2c2c; margin: 0;">
+                </p>
+            </div>`;
+    }
+}
+
+
+function renderPrettyTable(tsvData, containerId) {
+    const lines = tsvData.trim().split("\n");
+    if (lines.length === 0) return;
+
+    // 直接生成 table，外层容器由 HTML 里的 id="int-tsv-display" 提供
+    let tableHtml = `<table style="width: 100%; border-collapse: collapse;">
+            <thead><tr>`;
+
+    // 1. 处理表头
+    const headers = lines[0].split("\t");
+    headers.forEach(h => {
+        tableHtml += `<th>${h.trim()}</th>`;
+    });
+    tableHtml += `</tr></thead><tbody>`;
+
+    // 2. 处理数据行
+    for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].split("\t");
+        tableHtml += `<tr>`;
+        cols.forEach(c => {
+            tableHtml += `<td>${c.trim()}</td>`;
+        });
+        tableHtml += `</tr>`;
+    }
+
+    tableHtml += `</tbody></table>`;
+    
+    // 渲染到容器中
+    const container = document.getElementById(containerId);
+    if (container) {
+        container.innerHTML = tableHtml;
+    }
+}
+
+
+</script>
+
+
+</body>
+</html>
