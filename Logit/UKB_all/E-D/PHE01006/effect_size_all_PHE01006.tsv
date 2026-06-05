@@ -1,7 +1,0 @@
-FieldID	Trait	Category	OR	95%CI	Z	P	FactorID
-PHD01003	Lung cancer	Neoplasms	1.1482	1.01671, 1.28775	2.29597420803031	0.021677356133267	PHE01006
-PHD03002	Type II diabetes	Endocrine, nutritional and metabolic diseases	1.0685	1.01401, 1.12473	2.50656932385622	0.0121909149410878	PHE01006
-PHD08006	Venous thromboembolic disease	Diseases of the circulatory system	0.9221	0.84970, 0.99727	-1.98632445393257	0.0469973090378328	PHE01006
-PHD09001	Chronic obstructive pulmonary disease	Diseases of the respiratory system	1.0665	1.00531, 1.12962	2.16410549743146	0.0304562537033388	PHE01006
-PHD10001	Gastro-oesophageal reflux disease	Diseases of the digestive system	1.0544	1.00984, 1.10003	2.42599649232748	0.0152664178316358	PHE01006
-PHD12002	Chronic kidney disease	Diseases of the genitourinary system	1.0687	1.00665, 1.13292	2.2061633377891	0.0273725652564935	PHE01006
