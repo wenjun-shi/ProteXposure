@@ -25,7 +25,7 @@ opt = parse_args(opt_parser)
 PROJ_PATH <- "/public/home/gw_hychu/swj/"
 DATA_PATH <- paste0(PROJ_PATH, "proteohubProject/02_data/")
 
-## 1. Load disease data (生存数据)
+## 1. Load disease data
 disease_data <- readRDS(paste0(DATA_PATH, "out_pheno_Cox/disease_trait_", opt$sex, "_dat.rds"))
 disease_status <- disease_data[, opt$disease]
 
@@ -223,9 +223,7 @@ if(length(all_results) > 0) {
   # Summary
   cat("\n=== Cox Model Analysis Summary ===\n")
   cat("Disease analyzed:", opt$disease, "\n")
-  cat("Total events in survival data:", sum(disease_status, na.rm = TRUE), "\n")
   cat("Available SNPs for analysis:", length(available_snps), "\n")
-  cat("Output file:", output_file_full, "\n")
   cat("Total interactions tested:", nrow(final_results), "\n")
   cat("Significant interactions (P_Interaction < 0.05):", n_significant_05, "\n")
   cat("FDR significant interactions (FDR < 0.05):", n_significant_fdr_05, "\n")
