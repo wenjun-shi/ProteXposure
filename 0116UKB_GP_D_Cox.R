@@ -43,7 +43,6 @@ geno_mat <- fread(paste0(DATA_PATH, "sig_genotype/sig_geno_", opt$sex, ".raw"))
 geno_colnames <- colnames(geno_mat)
 geno_snp_ids <- laply(strsplit(geno_colnames, "_"), function(gn) gn[1])
 
-# 提取可用的SNP数据
 available_snps <- snp_names[snp_names %in% geno_snp_ids]
 if(length(available_snps) == 0) {
   stop(paste("No available SNPs found for disease", opt$disease))
