@@ -1,5 +1,5 @@
 ########################
-## Cox Attribution Analysis: Full Multi-Exposure Model (Gender-Stratified MI Version)
+## Cox Attribution Analysis 3
 ########################
 
 library(survival)
